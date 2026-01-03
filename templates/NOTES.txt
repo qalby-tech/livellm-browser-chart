@@ -1,0 +1,63 @@
+🎉 livellm-browser has been deployed!
+
+1. Get the application URLs by running these commands:
+
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_PORT_VNC=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "livellm-browser.fullname" . }})
+  export NODE_PORT_NOVNC=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[1].nodePort}" services {{ include "livellm-browser.fullname" . }})
+  export NODE_PORT_API=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[2].nodePort}" services {{ include "livellm-browser.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  
+  VNC:    vnc://$NODE_IP:$NODE_PORT_VNC
+  noVNC:  http://$NODE_IP:$NODE_PORT_NOVNC
+  API:    http://$NODE_IP:$NODE_PORT_API
+{{- else if contains "LoadBalancer" .Values.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "livellm-browser.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "livellm-browser.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  
+  VNC:    vnc://$SERVICE_IP:{{ .Values.service.vnc.port }}
+  noVNC:  http://$SERVICE_IP:{{ .Values.service.novnc.port }}
+  API:    http://$SERVICE_IP:{{ .Values.service.api.port }}
+{{- else if contains "ClusterIP" .Values.service.type }}
+  # Port-forward to access the services locally:
+  
+  # noVNC web interface (recommended):
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "livellm-browser.fullname" . }} 6901:{{ .Values.service.novnc.port }}
+  # Then open: http://localhost:6901
+  
+  # FastAPI Controller:
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "livellm-browser.fullname" . }} 8000:{{ .Values.service.api.port }}
+  # Then open: http://localhost:8000
+  
+  # VNC (for VNC client):
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "livellm-browser.fullname" . }} 5901:{{ .Values.service.vnc.port }}
+  # Then connect with VNC client to: localhost:5901
+{{- end }}
+
+2. Default VNC password: {{ .Values.env.VNC_PW }}
+
+3. Exposed Ports:
+   - 5901: VNC server
+   - 6901: noVNC web interface (browser-based VNC)
+   - 8000: FastAPI Controller API
+
+4. Persistent Volumes:
+{{- if .Values.persistence.chromeProfile.enabled }}
+   ✓ Chrome profile: /controller/profile
+{{- end }}
+{{- if .Values.persistence.firefoxProfile.enabled }}
+   ✓ Firefox profile: /headless/.mozilla
+{{- end }}
+{{- if .Values.persistence.downloads.enabled }}
+   ✓ Downloads: /headless/Downloads
+{{- end }}
+{{- if .Values.persistence.documents.enabled }}
+   ✓ Documents: /headless/Documents
+{{- end }}

@@ -1,0 +1,193 @@
+# Default values for livellm-browser
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: kamasalyamov/livellm-browser
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Environment variables for the container
+env:
+  # VNC password
+  VNC_PW: "headless"
+  # VNC resolution
+  VNC_RESOLUTION: "1920x1080"
+  # Display number
+  DISPLAY: ":1"
+
+# Additional environment variables from ConfigMap or Secret
+envFrom: []
+# - configMapRef:
+#     name: my-configmap
+# - secretRef:
+#     name: my-secret
+
+# Service account configuration
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 1000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: false
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# Service configuration - exposes VNC, noVNC, and FastAPI ports
+service:
+  type: ClusterIP
+  # VNC port
+  vnc:
+    port: 5901
+    targetPort: 5901
+  # noVNC web interface port
+  novnc:
+    port: 6901
+    targetPort: 6901
+  # FastAPI Controller port
+  api:
+    port: 8000
+    targetPort: 8000
+
+# Ingress configuration for web access
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: livellm-browser.local
+      paths:
+        - path: /
+          pathType: Prefix
+          # Which service port to use: novnc or api
+          servicePort: novnc
+  tls: []
+  #  - secretName: livellm-browser-tls
+  #    hosts:
+  #      - livellm-browser.local
+
+# Resource limits and requests matching compose config
+resources:
+  limits:
+    cpu: "1"
+    memory: "2Gi"
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+
+# Shared memory size for browsers (important for Chrome/Firefox)
+# This creates an emptyDir volume with medium: Memory
+shmSize: "2Gi"
+
+# Persistent volume claims for data persistence
+persistence:
+  # Chrome profile for Playwright
+  chromeProfile:
+    enabled: false
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    # Use existing PVC instead of creating a new one
+    existingClaim: ""
+  
+  # Firefox profile
+  firefoxProfile:
+    enabled: false
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    existingClaim: ""
+  
+  # Downloads directory
+  downloads:
+    enabled: false
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    existingClaim: ""
+  
+  # Documents directory
+  documents:
+    enabled: true
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    existingClaim: ""
+
+# Liveness probe configuration
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /
+    port: api
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Readiness probe configuration
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /
+    port: api
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# Autoscaling configuration (disabled by default for stateful workloads)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes
+volumes: []
+# - name: custom-volume
+#   configMap:
+#     name: my-config
+
+# Additional volume mounts
+volumeMounts: []
+# - name: custom-volume
+#   mountPath: /custom/path
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Deployment strategy
+strategy:
+  type: Recreate
+  # Use Recreate for stateful workloads with PVCs
+  # For rolling updates, use:
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 0

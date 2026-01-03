@@ -1,0 +1,80 @@
+{{- if and .Values.persistence.chromeProfile.enabled (not .Values.persistence.chromeProfile.existingClaim) }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "livellm-browser.chromeProfilePvcName" . }}
+  labels:
+    {{- include "livellm-browser.labels" . | nindent 4 }}
+    app.kubernetes.io/component: chrome-profile
+spec:
+  accessModes:
+    - {{ .Values.persistence.chromeProfile.accessMode }}
+  {{- if .Values.persistence.chromeProfile.storageClass }}
+  storageClassName: {{ .Values.persistence.chromeProfile.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.chromeProfile.size }}
+{{- end }}
+
+{{- if and .Values.persistence.firefoxProfile.enabled (not .Values.persistence.firefoxProfile.existingClaim) }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "livellm-browser.firefoxProfilePvcName" . }}
+  labels:
+    {{- include "livellm-browser.labels" . | nindent 4 }}
+    app.kubernetes.io/component: firefox-profile
+spec:
+  accessModes:
+    - {{ .Values.persistence.firefoxProfile.accessMode }}
+  {{- if .Values.persistence.firefoxProfile.storageClass }}
+  storageClassName: {{ .Values.persistence.firefoxProfile.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.firefoxProfile.size }}
+{{- end }}
+
+{{- if and .Values.persistence.downloads.enabled (not .Values.persistence.downloads.existingClaim) }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "livellm-browser.downloadsPvcName" . }}
+  labels:
+    {{- include "livellm-browser.labels" . | nindent 4 }}
+    app.kubernetes.io/component: downloads
+spec:
+  accessModes:
+    - {{ .Values.persistence.downloads.accessMode }}
+  {{- if .Values.persistence.downloads.storageClass }}
+  storageClassName: {{ .Values.persistence.downloads.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.downloads.size }}
+{{- end }}
+
+{{- if and .Values.persistence.documents.enabled (not .Values.persistence.documents.existingClaim) }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "livellm-browser.documentsPvcName" . }}
+  labels:
+    {{- include "livellm-browser.labels" . | nindent 4 }}
+    app.kubernetes.io/component: documents
+spec:
+  accessModes:
+    - {{ .Values.persistence.documents.accessMode }}
+  {{- if .Values.persistence.documents.storageClass }}
+  storageClassName: {{ .Values.persistence.documents.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.documents.size }}
+{{- end }}
+

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "livellm-browser.fullname" . }}
+  labels:
+    {{- include "livellm-browser.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.vnc.port }}
+      targetPort: vnc
+      protocol: TCP
+      name: vnc
+    - port: {{ .Values.service.novnc.port }}
+      targetPort: novnc
+      protocol: TCP
+      name: novnc
+    - port: {{ .Values.service.api.port }}
+      targetPort: api
+      protocol: TCP
+      name: api
+  selector:
+    {{- include "livellm-browser.selectorLabels" . | nindent 4 }}

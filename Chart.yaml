@@ -1,0 +1,23 @@
+apiVersion: v2
+name: livellm-browser
+description: A Helm chart for livellm-browser - a headless browser with VNC, noVNC web interface, and FastAPI controller
+
+type: application
+
+# Chart version - increment when making changes to the chart
+version: 0.1.0
+
+# Application version being deployed
+appVersion: "0.1.0"
+
+keywords:
+  - browser
+  - vnc
+  - novnc
+  - playwright
+  - automation
+
+home: https://github.com/kamasalyamov/livellm-browser
+
+maintainers:
+  - name: kamasalyamov
