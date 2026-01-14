@@ -138,7 +138,7 @@ persistence:
 livenessProbe:
   enabled: true
   httpGet:
-    path: /
+    path: /ping
     port: api
   initialDelaySeconds: 30
   periodSeconds: 10
@@ -149,7 +149,7 @@ livenessProbe:
 readinessProbe:
   enabled: true
   httpGet:
-    path: /
+    path: /ping
     port: api
   initialDelaySeconds: 10
   periodSeconds: 5
