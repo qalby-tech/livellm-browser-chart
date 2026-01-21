@@ -40,16 +40,22 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 1000
+# Pod-level security context
+podSecurityContext:
+  # Run as the headless user (UID 1000 in the container)
+  fsGroup: 1000
 
-securityContext: {}
+# Container-level security context
+# Chrome/Chromium needs relaxed security to run in Kubernetes
+securityContext:
+  # Required for Chrome to run properly in Kubernetes
+  # Chrome uses clone() and other syscalls that seccomp blocks by default
+  seccompProfile:
+    type: Unconfined
+  # Add SYS_ADMIN capability for Chrome sandboxing (if --no-sandbox is not used)
   # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: false
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  #   add:
+  #     - SYS_ADMIN
 
 # Service configuration - exposes VNC, noVNC, and FastAPI ports
 service:
