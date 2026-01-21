@@ -42,9 +42,9 @@ podLabels: {}
 
 # Pod-level security context
 podSecurityContext:
-  # Run as the headless user (UID 1000 in the container)
-  runAsUser: 1000
-  runAsGroup: 1000
+  # fsGroup ensures volume permissions are set correctly for the headless user (UID 1000)
+  # NOTE: Do NOT set runAsUser/runAsGroup here - the accetto base image needs to start
+  # as root to run its user generation script, then switches to the headless user
   fsGroup: 1000
 
 # Container-level security context
