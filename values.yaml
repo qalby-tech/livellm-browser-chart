@@ -45,7 +45,13 @@ podSecurityContext: {}
 
 # Container-level security context
 # Chrome/Chromium needs relaxed security to run in Kubernetes
-securityContext: {}
+securityContext:
+  allowPrivilegeEscalation: true
+  capabilities:
+    add:
+      - SYS_ADMIN  # Required for some browser sandboxing features
+  runAsUser: 1000  # Ensure this matches your 'headless' user ID
+  runAsGroup: 1000
 
 # Service configuration - exposes VNC, noVNC, and FastAPI ports
 service:

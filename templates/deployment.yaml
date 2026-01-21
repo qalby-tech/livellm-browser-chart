@@ -36,6 +36,15 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      initContainers:
+        - name: volume-mount-hack
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /home/headless/Desktop/app/profiles"]
+          volumeMounts:
+            {{- if .Values.persistence.profiles.enabled }}
+            - name: profiles
+              mountPath: {{ .Values.persistence.profiles.mountPath }}
+            {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
