@@ -50,8 +50,10 @@ securityContext:
   capabilities:
     add:
       - SYS_ADMIN  # Required for some browser sandboxing features
-  runAsUser: 1000  # Ensure this matches your 'headless' user ID
-  runAsGroup: 1000
+  # runAsUser and runAsGroup must be omitted so the container can start as root
+  # and run its user generation/startup scripts.
+  # runAsUser: 1000
+  # runAsGroup: 1000
 
 # Service configuration - exposes VNC, noVNC, and FastAPI ports
 service:
