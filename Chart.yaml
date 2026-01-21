@@ -8,7 +8,11 @@ type: application
 version: 0.2.0
 
 # Application version being deployed
+<<<<<<< HEAD
 appVersion: "0.2.0"
+=======
+appVersion: "0.1.3"
+>>>>>>> origin/main
 
 keywords:
   - browser

@@ -49,15 +49,8 @@
    - 8000: FastAPI Controller API
 
 4. Persistent Volumes:
-{{- if .Values.persistence.chromeProfile.enabled }}
-   ✓ Chrome profile: /controller/profile
-{{- end }}
-{{- if .Values.persistence.firefoxProfile.enabled }}
-   ✓ Firefox profile: /headless/.mozilla
-{{- end }}
-{{- if .Values.persistence.downloads.enabled }}
-   ✓ Downloads: /headless/Downloads
-{{- end }}
-{{- if .Values.persistence.documents.enabled }}
-   ✓ Documents: /headless/Documents
+{{- if .Values.persistence.profiles.enabled }}
+   ✓ Browser profiles: {{ .Values.persistence.profiles.mountPath }}
+{{- else }}
+   ✗ No persistent storage configured (browser profiles will be lost on restart)
 {{- end }}
