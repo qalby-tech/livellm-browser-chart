@@ -93,21 +93,10 @@ spec:
             # Shared memory for browsers
             - name: dshm
               mountPath: /dev/shm
-            {{- if .Values.persistence.chromeProfile.enabled }}
-            - name: chrome-profile
-              mountPath: /controller/profile
-            {{- end }}
-            {{- if .Values.persistence.firefoxProfile.enabled }}
-            - name: firefox-profile
-              mountPath: /headless/.mozilla
-            {{- end }}
-            {{- if .Values.persistence.downloads.enabled }}
-            - name: downloads
-              mountPath: /headless/Downloads
-            {{- end }}
-            {{- if .Values.persistence.documents.enabled }}
-            - name: documents
-              mountPath: /headless/Documents
+            {{- if .Values.persistence.profiles.enabled }}
+            # Browser profiles storage
+            - name: profiles
+              mountPath: {{ .Values.persistence.profiles.mountPath }}
             {{- end }}
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
@@ -118,25 +107,11 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: {{ .Values.shmSize }}
-        {{- if .Values.persistence.chromeProfile.enabled }}
-        - name: chrome-profile
+        {{- if .Values.persistence.profiles.enabled }}
+        # Browser profiles persistent volume
+        - name: profiles
           persistentVolumeClaim:
-            claimName: {{ include "livellm-browser.chromeProfilePvcName" . }}
-        {{- end }}
-        {{- if .Values.persistence.firefoxProfile.enabled }}
-        - name: firefox-profile
-          persistentVolumeClaim:
-            claimName: {{ include "livellm-browser.firefoxProfilePvcName" . }}
-        {{- end }}
-        {{- if .Values.persistence.downloads.enabled }}
-        - name: downloads
-          persistentVolumeClaim:
-            claimName: {{ include "livellm-browser.downloadsPvcName" . }}
-        {{- end }}
-        {{- if .Values.persistence.documents.enabled }}
-        - name: documents
-          persistentVolumeClaim:
-            claimName: {{ include "livellm-browser.documentsPvcName" . }}
+            claimName: {{ include "livellm-browser.profilesPvcName" . }}
         {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}

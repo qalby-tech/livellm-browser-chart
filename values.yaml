@@ -99,40 +99,18 @@ resources:
 # This creates an emptyDir volume with medium: Memory
 shmSize: "2Gi"
 
-# Persistent volume claims for data persistence
+# Persistent volume for browser profiles
+# This is the only persistent storage needed - stores browser profile data
 persistence:
-  # Chrome profile for Playwright
-  chromeProfile:
-    enabled: false
-    storageClass: ""
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    # Use existing PVC instead of creating a new one
-    existingClaim: ""
-  
-  # Firefox profile
-  firefoxProfile:
-    enabled: false
-    storageClass: ""
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    existingClaim: ""
-  
-  # Downloads directory
-  downloads:
-    enabled: false
-    storageClass: ""
-    accessMode: ReadWriteOnce
-    size: 5Gi
-    existingClaim: ""
-  
-  # Documents directory
-  documents:
+  profiles:
     enabled: true
     storageClass: ""
     accessMode: ReadWriteOnce
-    size: 5Gi
+    size: 2Gi
+    # Use existing PVC instead of creating a new one
     existingClaim: ""
+    # Mount path inside the container (matches PROFILES_DIR in main.py)
+    mountPath: /controller/profiles
 
 # Liveness probe configuration
 livenessProbe:

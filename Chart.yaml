@@ -5,10 +5,10 @@ description: A Helm chart for livellm-browser - a headless browser with VNC, noV
 type: application
 
 # Chart version - increment when making changes to the chart
-version: 0.1.0
+version: 0.2.0
 
 # Application version being deployed
-appVersion: "0.1.0"
+appVersion: "0.2.0"
 
 keywords:
   - browser

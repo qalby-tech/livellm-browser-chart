@@ -62,45 +62,12 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Create PVC name for chrome-profile
+Create PVC name for browser profiles
 */}}
-{{- define "livellm-browser.chromeProfilePvcName" -}}
-{{- if .Values.persistence.chromeProfile.existingClaim }}
-{{- .Values.persistence.chromeProfile.existingClaim }}
+{{- define "livellm-browser.profilesPvcName" -}}
+{{- if .Values.persistence.profiles.existingClaim }}
+{{- .Values.persistence.profiles.existingClaim }}
 {{- else }}
-{{- printf "%s-chrome-profile" (include "livellm-browser.fullname" .) }}
-{{- end }}
-{{- end }}
-
-{{/*
-Create PVC name for firefox-profile
-*/}}
-{{- define "livellm-browser.firefoxProfilePvcName" -}}
-{{- if .Values.persistence.firefoxProfile.existingClaim }}
-{{- .Values.persistence.firefoxProfile.existingClaim }}
-{{- else }}
-{{- printf "%s-firefox-profile" (include "livellm-browser.fullname" .) }}
-{{- end }}
-{{- end }}
-
-{{/*
-Create PVC name for downloads
-*/}}
-{{- define "livellm-browser.downloadsPvcName" -}}
-{{- if .Values.persistence.downloads.existingClaim }}
-{{- .Values.persistence.downloads.existingClaim }}
-{{- else }}
-{{- printf "%s-downloads" (include "livellm-browser.fullname" .) }}
-{{- end }}
-{{- end }}
-
-{{/*
-Create PVC name for documents
-*/}}
-{{- define "livellm-browser.documentsPvcName" -}}
-{{- if .Values.persistence.documents.existingClaim }}
-{{- .Values.persistence.documents.existingClaim }}
-{{- else }}
-{{- printf "%s-documents" (include "livellm-browser.fullname" .) }}
+{{- printf "%s-profiles" (include "livellm-browser.fullname" .) }}
 {{- end }}
 {{- end }}
