@@ -41,18 +41,11 @@ podAnnotations: {}
 podLabels: {}
 
 # Pod-level security context
-podSecurityContext:
-  # fsGroup ensures volume permissions are set correctly for the headless user (UID 1000)
-  # NOTE: Do NOT set runAsUser/runAsGroup here - the accetto base image needs to start
-  # as root to run its user generation script, then switches to the headless user
-  fsGroup: 1000
+podSecurityContext: {}
 
 # Container-level security context
 # Chrome/Chromium needs relaxed security to run in Kubernetes
-securityContext:
-  # Privileged mode is required for Chrome to work properly in Kubernetes
-  # This gives the container full access to host devices and kernel capabilities
-  privileged: true
+securityContext: {}
 
 # Service configuration - exposes VNC, noVNC, and FastAPI ports
 service:
@@ -106,7 +99,7 @@ shmSize: "4Gi"
 # This is the only persistent storage needed - stores browser profile data
 persistence:
   profiles:
-    enabled: true
+    enabled: false
     storageClass: ""
     accessMode: ReadWriteOnce
     size: 2Gi
