@@ -77,10 +77,10 @@ ingress:
   hosts:
     - host: livellm-browser.local
       paths:
-        - path: /
+        - path: /parser
           pathType: Prefix
           # Which service port to use: novnc or api
-          servicePort: novnc
+          servicePort: api
   tls: []
   #  - secretName: livellm-browser-tls
   #    hosts:
@@ -110,7 +110,7 @@ persistence:
     # Use existing PVC instead of creating a new one
     existingClaim: ""
     # Mount path inside the container (matches PROFILES_DIR in main.py)
-    mountPath: /controller/profiles
+    mountPath: /home/headless/Desktop/app/profiles
 
 # Liveness probe configuration
 livenessProbe:
