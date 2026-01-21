@@ -99,7 +99,7 @@ shmSize: "4Gi"
 # This is the only persistent storage needed - stores browser profile data
 persistence:
   profiles:
-    enabled: false
+    enabled: true
     storageClass: ""
     accessMode: ReadWriteOnce
     size: 2Gi
