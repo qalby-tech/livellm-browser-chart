@@ -54,10 +54,13 @@ securityContext:
   # Chrome uses clone() and other syscalls that seccomp blocks by default
   seccompProfile:
     type: Unconfined
-  # SYS_PTRACE is required for Chrome's remote debugging pipe to work
-  # Without it, Chrome crashes immediately with SIGTRAP signal
+  # Capabilities required for Chrome:
+  # - SYS_ADMIN: Required for Chrome's user namespace sandbox (even with --no-sandbox, 
+  #              internal processes may still use namespaces)
+  # - SYS_PTRACE: Required for Chrome's remote debugging pipe
   capabilities:
     add:
+      - SYS_ADMIN
       - SYS_PTRACE
 
 # Service configuration - exposes VNC, noVNC, and FastAPI ports
