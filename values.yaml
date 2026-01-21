@@ -50,18 +50,9 @@ podSecurityContext:
 # Container-level security context
 # Chrome/Chromium needs relaxed security to run in Kubernetes
 securityContext:
-  # Required for Chrome to run properly in Kubernetes
-  # Chrome uses clone() and other syscalls that seccomp blocks by default
-  seccompProfile:
-    type: Unconfined
-  # Capabilities required for Chrome:
-  # - SYS_ADMIN: Required for Chrome's user namespace sandbox (even with --no-sandbox, 
-  #              internal processes may still use namespaces)
-  # - SYS_PTRACE: Required for Chrome's remote debugging pipe
-  capabilities:
-    add:
-      - SYS_ADMIN
-      - SYS_PTRACE
+  # Privileged mode is required for Chrome to work properly in Kubernetes
+  # This gives the container full access to host devices and kernel capabilities
+  privileged: true
 
 # Service configuration - exposes VNC, noVNC, and FastAPI ports
 service:
