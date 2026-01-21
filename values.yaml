@@ -41,20 +41,18 @@ podAnnotations: {}
 podLabels: {}
 
 # Pod-level security context
-podSecurityContext: {}
+podSecurityContext:
+  seccompProfile:
+    type: Unconfined
 
 # Container-level security context
 # Chrome/Chromium needs relaxed security to run in Kubernetes
 securityContext:
   allowPrivilegeEscalation: true
+  privileged: false
   capabilities:
     add:
       - SYS_ADMIN  # Required for some browser sandboxing features
-  # runAsUser and runAsGroup must be omitted so the container can start as root
-  # and run its user generation/startup scripts.
-  # runAsUser: 1000
-  # runAsGroup: 1000
-
 # Service configuration - exposes VNC, noVNC, and FastAPI ports
 service:
   type: ClusterIP

@@ -37,9 +37,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       initContainers:
-        - name: volume-mount-hack
+        - name: cleanup-locks-and-permissions
           image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /home/headless/Desktop/app/profiles"]
+          command: ["sh", "-c", "rm -f /home/headless/Desktop/app/profiles/default/SingletonLock* && chown -R 1000:1000 /home/headless/Desktop/app/profiles"]
           volumeMounts:
             {{- if .Values.persistence.profiles.enabled }}
             - name: profiles
