@@ -91,11 +91,11 @@ ingress:
 # Resource limits and requests matching compose config
 resources:
   limits:
-    cpu: "1"
+    cpu: "2"
     memory: "4Gi"
   requests:
-    cpu: "500m"
-    memory: "2Gi"
+    cpu: "2"
+    memory: "4Gi"
 
 # Shared memory size for browsers (important for Chrome/Firefox)
 # This creates an emptyDir volume with medium: Memory
@@ -103,11 +103,14 @@ shmSize: "4Gi"
 
 # Persistent volume for browser profiles
 # This is the only persistent storage needed - stores browser profile data
+# Note: For autoscaling with multiple replicas, use ReadWriteMany (requires NFS/CephFS)
+#       or disable persistence if profiles don't need to be shared
 persistence:
   profiles:
     enabled: true
     storageClass: ""
-    accessMode: ReadWriteOnce
+    # Use ReadWriteMany for autoscaling, ReadWriteOnce for single replica
+    accessMode: ReadWriteMany
     size: 2Gi
     # Use existing PVC instead of creating a new one
     existingClaim: ""
@@ -136,13 +139,14 @@ readinessProbe:
   timeoutSeconds: 3
   failureThreshold: 3
 
-# Autoscaling configuration (disabled by default for stateful workloads)
+# Autoscaling configuration
+# Note: Requires metrics-server installed in cluster
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
 
 # Additional volumes
 volumes: []
@@ -165,11 +169,11 @@ tolerations: []
 affinity: {}
 
 # Deployment strategy
+# Using RollingUpdate for autoscaling support
 strategy:
-  type: Recreate
-  # Use Recreate for stateful workloads with PVCs
-  # For rolling updates, use:
-  # type: RollingUpdate
-  # rollingUpdate:
-  #   maxSurge: 1
-  #   maxUnavailable: 0
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+  # Use Recreate for single-replica stateful workloads with RWO PVCs:
+  # type: Recreate
